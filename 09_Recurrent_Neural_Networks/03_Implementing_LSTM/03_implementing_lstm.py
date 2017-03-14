@@ -33,7 +33,7 @@ training_seq_len = 50 # how long of a word group to consider
 embedding_size = rnn_size
 save_every = 500 # How often to save model checkpoints
 eval_every = 50 # How often to evaluate the test sentences
-prime_texts = ['thou art more', 'to be or not to', 'wherefore art thou']
+prime_texts = ['все', 'нас', 'здесь']
 
 # Download/store Shakespeare data
 data_dir = 'temp'
@@ -57,7 +57,7 @@ print('Loading Shakespeare Data')
 # Check if file is downloaded.
 if not os.path.isfile(os.path.join(data_dir, data_file)):
     print('Not found, downloading Shakespeare texts from www.gutenberg.org')
-    shakespeare_url = 'http://www.gutenberg.org/cache/epub/100/pg100.txt'
+    shakespeare_url = 'http://tululu.org/txt.php?id=18957'
     # Get Shakespeare text
     response = requests.get(shakespeare_url)
     shakespeare_file = response.content
@@ -70,11 +70,11 @@ if not os.path.isfile(os.path.join(data_dir, data_file)):
     s_text = s_text.replace('\n', '')
     
     # Write to file
-    with open(os.path.join(data_dir, data_file), 'w') as out_conn:
+    with open(os.path.join(data_dir, data_file), encoding='utf-8', mode='w') as out_conn:
         out_conn.write(s_text)
 else:
     # If file has been saved, load from that file
-    with open(os.path.join(data_dir, data_file), 'r') as file_conn:
+    with open(os.path.join(data_dir, data_file), encoding='utf-8', mode='r') as file_conn:
         s_text = file_conn.read().replace('\n', '')
 
 # Clean text
@@ -184,7 +184,7 @@ class LSTM_Model():
         optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = optimizer.apply_gradients(zip(gradients, tf.trainable_variables()))
         
-    def sample(self, sess, words=ix2vocab, vocab=vocab2ix, num=10, prime_text='thou art'):
+    def sample(self, sess, words=ix2vocab, vocab=vocab2ix, num=10, prime_text='здесь'):
         state = sess.run(self.lstm_cell.zero_state(1, tf.float32))
         word_list = prime_text.split()
         for word in word_list[:-1]:
